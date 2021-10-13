@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-__attribute__((constructor)) watchbird(int argc, char *argv[]) {
+
+__attribute__((constructor)) d1no(int argc, char *argv[]) {
     int isFirstrun = 1;
     int isenv = !strcmp(argv[0], "env");
     for (int i = 0; i < argc; i++) {
@@ -15,7 +16,7 @@ __attribute__((constructor)) watchbird(int argc, char *argv[]) {
                         char delimiter[] =
                             "a2f5464863e4ef86d07b7bd89e815407fbfaa912";
                         FILE *logfile =
-                            fopen("/tmp/watchbird/log/rce_log.txt", "a");
+                            fopen("/tmp/d1no/log/rce_log.txt", "a");
                         fprintf(logfile, "%s%s%s%s", delimiter,
                                 getenv("php_timestamp"), delimiter,
                                 getenv("php_timestamp"));
@@ -29,14 +30,14 @@ __attribute__((constructor)) watchbird(int argc, char *argv[]) {
         if (strstr(argv[i], "flag") != NULL ||
             strstr(argv[i], "LD_PRELOAD") != NULL ||
             strstr(argv[i], "waf.so") != NULL ||
-            strstr(argv[i], "watchbird") != NULL ||
+            strstr(argv[i], "d1no") != NULL ||
             strstr(argv[i], "/dev/tcp/") != NULL){
                 if (getenv("waf_firstrun") != NULL) {
                     isFirstrun = 0;
                 }
                 if (isFirstrun) {
                     char delimiter[] = "a2f5464863e4ef86d07b7bd89e815407fbfaa912";
-                    FILE *logfile = fopen("/tmp/watchbird/log/rce_log.txt", "a");
+                    FILE *logfile = fopen("/tmp/d1no/log/rce_log.txt", "a");
                     fprintf(logfile, "%s%s%s%s", delimiter, getenv("php_timestamp"),
                             delimiter, getenv("php_timestamp"));
                     fclose(logfile);

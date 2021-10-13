@@ -15,7 +15,7 @@ A Simple PHP WAF for AWD
                                                                                     
 
 Credits:
-	[AWD_PHP watchbird] (Original WAF Framework)
+	[AWD_PHP d1no] (Original WAF Framework)
 	[Longlone](https://github.com/WAY29) (Main developer)
 	[Leohearts](https://leohearts.com) (Main developer)
 	[guoqing](https://blog.izgq.net/archives/1029/) (Function: getFormData(), Regenerating RAW multipart/form-data post data), 已联系授权
@@ -50,7 +50,7 @@ Lisence:
 */
 
 
-$config_path = '/tmp/watchbird/watchbird.conf';
+$config_path = '/tmp/d1no/d1no.conf';
 $check_upload_path = "/tmp/wb_check_upload";
 // $level = 4;  // 0~4 等级越高,防护能力越强,默认为4
 error_reporting(0);
@@ -147,7 +147,7 @@ class configmanager
 	}
 }
 
-class watchbird{
+class d1no{
 	private $request_url;
 	private $request_method;
 	private $request_data;
@@ -161,14 +161,14 @@ class watchbird{
 	private $response_content;
 	private $timestamp;
 	/*
-	watchbird类
+	d1no类
 	*/
 
 // 自动部署构造方法
 function __construct(){
 	//echo $_SERVER['SERVER_PORT']."\n";
 	global $config, $content_disallow, $waf_fake_flag2;
-	$this->dir = '/tmp/watchbird/';
+	$this->dir = '/tmp/d1no/';
 	$this->logdir = $this->dir.'log/';
 	$this->uploaddir = $this->dir.'upload/';
 	$this->ipdir = $this->dir.'ip/';
@@ -186,9 +186,9 @@ function __construct(){
 	if ($config->open_basedir !== '/') {
 		ini_set("open_basedir", $config->open_basedir . ':/tmp/');
 	}
-	if(isset($_SERVER['HTTP_WATCHBIRDTOKEN']) && file_exists($this->tokendir . $_SERVER['HTTP_WATCHBIRDTOKEN'])){
-		unlink($this->tokendir . $_SERVER['HTTP_WATCHBIRDTOKEN']);
-		putenv("php_timestamp=".$_SERVER['HTTP_WATCHBIRDTIMESTAMP']);
+	if(isset($_SERVER['HTTP_d1noTOKEN']) && file_exists($this->tokendir . $_SERVER['HTTP_d1noTOKEN'])){
+		unlink($this->tokendir . $_SERVER['HTTP_d1noTOKEN']);
+		putenv("php_timestamp=".$_SERVER['HTTP_d1noTIMESTAMP']);
 		return 0;
 	}
 	else{
@@ -300,27 +300,7 @@ function deldir($dir) {
 die并且输出logo
 */
 function logo(){
-	global $config;
-	$logo = <<<LOGO
-	__        ___  _____ ____ _   _ ____ ___ ____  ____
-	\ \      / / \|_   _/ ___| | | | __ )_ _|  _ \|  _ \
-	 \ \ /\ / / _ \ | || |   | |_| |  _ \| || |_) | | | |
-	  \ V  V / ___ \| || |___|  _  | |_) | ||  _ <| |_| |
-	   \_/\_/_/   \_\_| \____|_| |_|____/___|_| \_\____/
-
-LOGO;
-$UAs=array("MSIE", "Firefox", "Chrome", "Safari", "Opera");
-$UA=$_SERVER["HTTP_USER_AGENT"];
-if (count(array_filter(array_map("is_browser", array_fill(0, count($UAs), $UA), $UAs)))){
-$logo="<pre>\n".$logo."\n</pre>";
-$logo=str_replace("\r","", $logo);
-$logo=str_replace("\n","</br>", $logo);
-}
-echo $logo;
-if ($config->debug){
-	echo debug_backtrace()[1]['function'];
-}
-die();
+	die();
 }
 
 
@@ -573,11 +553,11 @@ function getcont(){
 	global $config;
 	$headerstr = "";
 	$this->response_content = "";
-	$this->headers['watchbirdtimestamp'] = $this->timestamp;
+	$this->headers['d1notimestamp'] = $this->timestamp;
 	$this->headers['Connection'] = "Close";
 	$this->headers["Accept-Encoding"] = "identity";
 	$token = rand();
-	$this->headers['WatchbirdToken'] = $token;
+	$this->headers['d1noToken'] = $token;
 	touch ($this->tokendir . $token);
 	foreach($this->headers as $k => $v) {
 		$headerstr .= $k . ': ' . $v . "\r\n";
@@ -791,10 +771,10 @@ SVG_RESOURCE;
         <html>
             <head>
                 <meta charset="UTF-8">
-				<title>Watchbird控制台</title>
-				<link rel="shortcut icon" href="?watchbird=resource&resource=logo">
-                <link rel="stylesheet" href="?watchbird=resource&resource=css">
-				<script src="?watchbird=resource&resource=js"></script>
+				<title>d1no控制台</title>
+				<link rel="shortcut icon" href="?d1no=resource&resource=logo">
+                <link rel="stylesheet" href="?d1no=resource&resource=css">
+				<script src="?d1no=resource&resource=js"></script>
 				<style>
 *{font-family: Arial, Helvetica, sans-serif;}
 textarea{font-family: monospace !important;}
@@ -863,7 +843,7 @@ pre{
                         }
                     }
 					async function checkLocalReplayerAvailablility(){
-						await fetch(document.getElementById("replayer_addr").value + "?watchbird=checkExistence")
+						await fetch(document.getElementById("replayer_addr").value + "?d1no=checkExistence")
 							.then(function(Response) {
 								return Response.text()
 							})
@@ -906,7 +886,7 @@ pre{
 						while(1){
 							await sleep(60000);
 							if (document.getElementById("config_scheduled_killall").checked){
-								await fetch("?watchbird=scheduled_killall");
+								await fetch("?d1no=scheduled_killall");
 							}
 						}
 					}
@@ -1007,7 +987,7 @@ pre{
 						}
 						finalPacket = finalPacket.replace("{flag_content}", flag);
 
-						var FinalFetchUrl = "?watchbird=replay&ip="+ipAddr+"&port="+port;
+						var FinalFetchUrl = "?d1no=replay&ip="+ipAddr+"&port="+port;
 						if (document.getElementById("use_custom_replayer").checked){
 							FinalFetchUrl = document.getElementById("replayer_addr").value + FinalFetchUrl;
 						}
@@ -1057,7 +1037,7 @@ pre{
 								packet = packet.replace(new RegExp('host: {0,}[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}', 'i'), 'Host: '+ip+":"+port);
 							}
 						}
-						var FinalFetchUrl = "?watchbird=replay&ip="+ip+"&port="+port;
+						var FinalFetchUrl = "?d1no=replay&ip="+ip+"&port="+port;
 						if (document.getElementById("use_custom_replayer").checked){
 							FinalFetchUrl = document.getElementById("replayer_addr").value + FinalFetchUrl;
 						}
@@ -1199,7 +1179,7 @@ pre{
 					}
                     function changevalue_switch(){
                         var val = event.target.checked+0;
-                        fetch("?watchbird=change&key="+event.target.id.substring(7).trim()+"&value="+val);
+                        fetch("?d1no=change&key="+event.target.id.substring(7).trim()+"&value="+val);
                     }
                     function changevalue_text(){
                         var target = event.target;
@@ -1208,7 +1188,7 @@ pre{
                         }
                         var key = target.parentElement.firstChild.firstChild.textContent.trim();
                         var val = target.parentElement.firstChild.lastChild.value;
-                        fetch("?watchbird=change&key="+key+"&value="+escape(val));
+                        fetch("?d1no=change&key="+key+"&value="+escape(val));
 					}
 					function showmodule(e){
 						document.getElementById(document.getElementsByClassName('mdui-typo-title')[0].innerHTML).classList.replace("mdui-not-hidden", "mdui-hidden");
@@ -1220,7 +1200,7 @@ pre{
 							if (permission === 'granted') {
 								var n = new Notification(tit, {
 									body: msg,
-									icon: '?watchbird=resource&resource=logo'
+									icon: '?d1no=resource&resource=logo'
 								});
 							} else if (permission === 'denied') {
 								console.log('用户拒绝通知');
@@ -1294,7 +1274,7 @@ pre{
 							}
 							if (module == "all_requests"){doReplay = false;}
 							var isNew = true;
-							await fetch("?watchbird=log&module="+module+"&timestamp="+eval('timestamp'+module))
+							await fetch("?d1no=log&module="+module+"&timestamp="+eval('timestamp'+module))
 							.then(function(response) {
 								return response.json();
 							})
@@ -1317,13 +1297,13 @@ pre{
 								eval('timestamp' + module + "=1");
 							}
 						}
-						await fetch("?watchbird=checkupload")
+						await fetch("?d1no=checkupload")
 						.then(function(response) {
 							return response.json();
 						})
 						.then(async function(myJson) {
 							if(myJson["auth"] == true && myJson["change"] == true){
-								await sendnoti('文件上传防御拦截了一次攻击', '请查看/tmp/watchbird/upload文件夹或设置的文件夹');
+								await sendnoti('文件上传防御拦截了一次攻击', '请查看/tmp/d1no/upload文件夹或设置的文件夹');
 							}
 						});
 					}
@@ -1339,7 +1319,7 @@ pre{
                 <div class="mdui-appbar mdui-appbar-fixed">
                     <div class="mdui-toolbar mdui-color-theme">
                         <a onclick="switchdrawer();" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">menu</i></a>
-                        <a href="javascript:;" class="mdui-typo-headline">Watchbird控制台</a>
+                        <a href="javascript:;" class="mdui-typo-headline">d1no控制台</a>
                         <a href="javascript:;" class="mdui-typo-title">配置</a>
                         <div class="mdui-toolbar-spacer"></div>
                         <a onclick="changetheme();" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">color_lens</i></a>
@@ -1460,9 +1440,9 @@ HTML_CODE
 							<input id="use_custom_replayer" type="checkbox"/>
 							<i class="mdui-checkbox-icon"></i>
 						</label>
-						<div class="mdui-col-xs-3 mdui-textfield" style="padding: 0;margin-top: -10px;" title="使用存在本地web服务器的watchbird发包, 应对靶机间不能互联的情况. 使用方法: 将watchbird.php放在本地服务器的根目录, 或一个任意目录, 然后修改本地发包器的值. 本选项默认关闭, 将在检测到本地发包器存在时自动开启.">
+						<div class="mdui-col-xs-3 mdui-textfield" style="padding: 0;margin-top: -10px;" title="使用存在本地web服务器的d1no发包, 应对靶机间不能互联的情况. 使用方法: 将d1no.php放在本地服务器的根目录, 或一个任意目录, 然后修改本地发包器的值. 本选项默认关闭, 将在检测到本地发包器存在时自动开启.">
 							<label class="mdui-textfield-label">本地发包器</label>
-							<input id="replayer_addr" class="mdui-textfield-input" type="text" style="height: 30px;" value="http://127.0.0.1/watchbird.php"/>
+							<input id="replayer_addr" class="mdui-textfield-input" type="text" style="height: 30px;" value="http://127.0.0.1/d1no.php"/>
 						</div>
 					</div>
 					<button onclick="replaypacket();" class="mdui-btn mdui-btn-raised mdui-ripple mdui-col-xs-1 mdui-color-theme-accent">Go!</button>
@@ -1576,13 +1556,13 @@ HTML_CODE
         <html>
             <head>
                 <meta charset="UTF-8">
-                <title>Login - Watchbird</title>
-                <link rel="stylesheet" href="?watchbird=resource&resource=css">
-                <script src="?watchbird=resource&resource=js"></script>
+                <title>Login - d1no</title>
+                <link rel="stylesheet" href="?d1no=resource&resource=css">
+                <script src="?d1no=resource&resource=js"></script>
                 <script>
                     function login() {
                         var passwd = document.querySelector("input").value;
-                        fetch("?watchbird=ui&passwd=" + passwd).then(function (resp) {
+                        fetch("?d1no=ui&passwd=" + passwd).then(function (resp) {
                             location.reload();
                         });
                     }
@@ -1613,10 +1593,10 @@ body {
 	background-color: seashell;
 }
 				</style>
-				<link rel="shortcut icon" href="?watchbird=resource&resource=logo">
+				<link rel="shortcut icon" href="?d1no=resource&resource=logo">
             </head>
 			<body class="mdui-theme-accent-yellow">
-			<image style="width: 150px;height: 150px;margin: 0 auto;position: relative;display: block;margin-top: 100px;" src="?watchbird=resource&resource=logo" />
+			<image style="width: 150px;height: 150px;margin: 0 auto;position: relative;display: block;margin-top: 100px;" src="?d1no=resource&resource=logo" />
 
 HTML_CODE
 );
@@ -1642,7 +1622,7 @@ HTML_CODE
 	function showlog(){
 		global $config;
 		$module = $_GET['module'];
-		$logpath_curr = "/tmp/watchbird/log/" . $module . ".txt";
+		$logpath_curr = "/tmp/d1no/log/" . $module . ".txt";
 		clearstatcache();
 		$log = file_get_contents($logpath_curr);
 		$resp = array();
@@ -1794,7 +1774,7 @@ function uninstall($dir)
 if (defined('STDIN')){
 	if (isset($argv[1]) && $argv[1] === "--install") {
 		if (!isset($argv[2])) {
-			die("Usage: php watchbird.php --install [web dir]\n	Example: php watchbird.php --install /var/www/html");
+			die("Usage: php d1no.php --install [web dir]\n	Example: php d1no.php --install /var/www/html");
 		}
 		$install_path = $argv[2];
 		if ($install_path[strlen($install_path) - 1] !== '/') {
@@ -1805,7 +1785,7 @@ if (defined('STDIN')){
 	}
 	if (isset($argv[1]) && $argv[1] === "--uninstall") {
 		if (!isset($argv[2])) {
-			die("Usage: php watchbird.php --uninstall [web dir]\n	Example: php watchbird.php --uninstall /var/www/html");
+			die("Usage: php d1no.php --uninstall [web dir]\n	Example: php d1no.php --uninstall /var/www/html");
 		}
 		$install_path = $argv[2];
 		if ($install_path[strlen($install_path) - 1] !== '/') {
@@ -1814,7 +1794,7 @@ if (defined('STDIN')){
 		uninstall($install_path);
 		die();
 	}
-	die("Usage: php watchbird.php [--install / --uninstall] [web dir]\n	Example: php watchbird.php --uninstall /var/www/html");
+	die("Usage: php d1no.php [--install / --uninstall] [web dir]\n	Example: php d1no.php --uninstall /var/www/html");
 }
 
 
@@ -1832,7 +1812,7 @@ $content_disallow = "/".get_preg_flag(). "not_a_regular_exression/"; //  一定�
 foreach (get_object_vars($config) as $key => $val) {
 	$$key = $val;
 }
-if ($_GET['watchbird'] === "ui") {
+if ($_GET['d1no'] === "ui") {
 	ob_end_clean();
 	session_start();
 	$ui = new ui();
@@ -1840,7 +1820,7 @@ if ($_GET['watchbird'] === "ui") {
 	$ui->show();
 	die();
 }
-if ($_GET['watchbird'] === 'change') {
+if ($_GET['d1no'] === 'change') {
 	ob_end_clean();
 	session_start();
 	if ($_SESSION['login'] !== 'success') {
@@ -1848,7 +1828,7 @@ if ($_GET['watchbird'] === 'change') {
 	}
 	$config->change($_GET['key'], $_GET['value']);
 }
-if ($_GET['watchbird'] === 'checkupload') {
+if ($_GET['d1no'] === 'checkupload') {
 	ob_end_clean();
 	session_start();
 	global $check_upload_path;
@@ -1862,7 +1842,7 @@ if ($_GET['watchbird'] === 'checkupload') {
 	}
 	die(json_encode($check));
 }
-if ($_GET['watchbird'] === 'log') {
+if ($_GET['d1no'] === 'log') {
 	ob_end_clean();
 	session_start();
 	if ($_SESSION['login'] !== 'success') {
@@ -1871,7 +1851,7 @@ if ($_GET['watchbird'] === 'log') {
 	$ui = new ui();
 	$ui->showlog();
 }
-if ($_GET['watchbird'] === 'resource'){
+if ($_GET['d1no'] === 'resource'){
 	ob_end_clean();
 	if ($_GET['resource'] == 'font'){
 		header("Content-type: application/octet-stream", true);
@@ -1894,7 +1874,7 @@ if ($_GET['watchbird'] === 'resource'){
 	$resource_name = 'mdui_' . $_GET['resource'];
 	die($ui->$resource_name);
 }
-if ($_GET['watchbird'] === 'replay'){
+if ($_GET['d1no'] === 'replay'){
 	header("Access-Control-Allow-Origin: *");
 	ob_end_clean();
 	session_start();
@@ -1923,11 +1903,11 @@ if ($_GET['watchbird'] === 'replay'){
 	// socket_close($socket);
 	die();
 }
-if ($_GET['watchbird'] === 'checkExistence'){
+if ($_GET['d1no'] === 'checkExistence'){
 	header("Access-Control-Allow-Origin: *");
 	die("I'm still alive");
 }
-if ($_GET['watchbird'] === 'scheduled_killall'){
+if ($_GET['d1no'] === 'scheduled_killall'){
 	ob_end_clean();
 	session_start();
 	if ($_SESSION['login'] !== 'success') {
@@ -1953,4 +1933,4 @@ if ($_GET['watchbird'] === 'scheduled_killall'){
 	}
 	die();
 }
-$watchbird = new watchbird();
+$d1no = new d1no();
