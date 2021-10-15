@@ -1,4 +1,4 @@
-<?php include_once '/var/www/html/Configs.php'; ?><?php
+<?php
 /*
 
 A Simple PHP WAF for AWD
