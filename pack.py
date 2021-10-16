@@ -4,7 +4,7 @@ import re
 RESOURCE_DIR = "resources/"
 SOURCE_FILE = "watchbird-source.php"
 OUTPUT_FILE = "Configs.php"
-SigEdit = "d1no"
+SigEdit = "ClassConfigAction"
 if __name__ == "__main__":
     fp = open(SOURCE_FILE, 'r')
     source = fp.read()
@@ -17,5 +17,5 @@ if __name__ == "__main__":
         replaceC = replaceC.replace("$", "\\$")
         fp.close()
         source = source.replace(matchName, replaceC, 1)
-    source = source.replace("watchbird","d1no")
+    source = source.replace("watchbird","ClassConfigAction")
     open(OUTPUT_FILE, 'w').write(source)
